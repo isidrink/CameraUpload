@@ -10,7 +10,16 @@
     
     <link rel="stylesheet" href="content/css/style.css">
 	<style>
+	.km-view-title{
+			height:61px;
+			background-color:rgba(0, 0, 0, 1.0);
+	}
+	.km-ios, .km-ios .km-content{
+		background-image:url('content/images/background2.jpg');
+
+	}
 	
+	/*
 	.km-ios .km-navbar{
 		background-image:url('content/images/splash.jpg');
 		background-repeat:no-repeat;
@@ -29,13 +38,14 @@
 		background-image:none;
 		background-color:transparent;
 	}
+	*/
 	</style>
 </head>
 <body>
     <div data-role="layout" data-id="default">
         <header data-role="header">
         <div data-role="navbar">
-            <span data-role="view-title"></span>
+			<img src="content/images/splash.jpg" id="logo">
             <a class="about-button" data-align="right" href="content/about.html" data-role="button">About</a>
         </div>
         </header>
