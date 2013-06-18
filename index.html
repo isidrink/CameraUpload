@@ -10,14 +10,7 @@
     
     <link rel="stylesheet" href="content/css/style.css">
 	<style>
-	.km-view-title{
-			height:61px;
-			background-color:rgba(0, 0, 0, 1.0);
-	}
-	.km-ios, .km-ios .km-content{
-		background-image:url('content/images/background2.jpg');
-
-	}
+	
 	
 	/*
 	.km-ios .km-navbar{
@@ -60,15 +53,16 @@
         </footer>
     </div>
 
-    <div data-title="Kendo sushi" data-role="view" id="index" data-url="/" data-layout="default" data-model="viewModel" data-before-show="showHomeView">
-        <ul
+    <div data-title="Kendo sushi" data-role="view" id="index" data-url="/" data-layout="default" data-model="viewModel" data-before-show="showHomeView" data-init="mobileListViewEndlessScrolling">
+        <!--<ul
             id="featured"
             class="item-list"
             data-type="flat"
             data-role="listview"
             data-template="menuTemplate"
             data-bind="source: dataSource"
-        ></ul>
+        ></ul>-->
+		 <ul id="endless-scrolling"></ul>
     </div>
 
     <div data-title="Menu" data-role="view" id="menu" data-layout="default" data-model="viewModel" data-show="showMenuView">
@@ -172,6 +166,113 @@
             <span class="price">total: #:kendo.toString(price * ordered, "c")#</span>
         </a>
     </script>
+
+	<script id="endless-scrolling-template" type="text/x-kendo-template">
+		<div class="tweet">
+			<img class="pullImage" src="#= user.profile_image_url #" alt="#= user.name #" />#= text #
+			<div class="metadata">
+				<a class="sublink" target="_blank" href="http://twitter.com/\\#!/#= user.screen_name #/status/#= id_str #" data-rel="external" rel="nofollow">#= kendo.toString(new Date(Date.parse(created_at)), "dd MMM HH:mm") #</a>
+				|
+				<a class="sublink" href="http://twitter.com/#= user.screen_name #" rel="nofollow" data-rel="external">#= user.name #</a>
+			</div>
+		</div>
+	</script>
+
+<script>
+    var maxIdRegExp = /max_id=\d*/,
+        sinceIdRegExp = /since_id=\d*/;
+
+    function getQueryValue(queryString, regexp) {
+        var value = regexp.exec(queryString);
+
+        if (value) {
+            value = value[0].split("=")[1];
+        }
+
+        return value;
+    }
+
+    function mobileListViewEndlessScrolling() {
+            var dataSource = new kendo.data.DataSource({
+                pageSize: 50,
+                serverPaging: true,
+                transport: {
+                    read: {
+                        url: "http://demos.kendoui.com/service/Twitter/Search", // the remote service url - Twitter API v1.1
+                        dataType: "jsonp" // JSONP (JSON with padding) is required for cross-domain AJAX
+                    },
+                    parameterMap: function(options) {
+                        var parameters = {
+                            q: "javascript", //additional parameters sent to the remote service
+                            max_id: max_id_str, //additional parameters sent to the remove service
+                            count: options.pageSize
+                        }
+
+                        return parameters;
+                    }
+                },
+                schema: { // describe the result format
+                    parse: function(response) {
+                        if (response.search_metadata) {
+                            max_id_str = getQueryValue(response.search_metadata.next_results, maxIdRegExp); //retrieve max_id for the endless scrolling
+                        }
+                        return response;
+                    },
+                    data: function(data) {
+                        return data.statuses || [];
+                    },
+                    total: function() { return 100000 }
+                }
+            }),
+            max_id_str;
+
+        $("#endless-scrolling").kendoMobileListView({
+            dataSource: dataSource,
+            template: $("#endless-scrolling-template").text(),
+            scrollThreshold: 30, //threshold in pixels
+            endlessScroll: true
+        });
+    }
+</script>
+
+<style scoped>
+	.km-view-title{
+			height:61px;
+			background-color:rgba(0, 0, 0, 1.0);
+	}
+	.km-ios, .km-ios .km-content{
+	background:transparent;
+	}
+	.km-view{
+		/*background-image:url('content/images/background2.jpg');
+		background-color:rgba(0, 0, 0, 1.0);*/
+		background-color: #6c2408;
+		background-image: linear-gradient(to bottom, #000, #636363);
+		border-color: #D14600;
+		box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+		color: white;
+	}
+
+    .tweet {
+        font-size: .8em;
+        line-height: 1.4em;
+    }
+    .pullImage {
+        width: 64px;
+        height: 64px;
+        border-radius: 3px;
+        float: left;
+        margin-right: 10px;
+    }
+    .sublink {
+        font-size: .9em;
+        font-weight: normal;
+        display: inline-block;
+        padding: 3px 3px 0 0;
+        text-decoration: none;
+        opacity: .8;
+    }
+</style>
 
     <script>
         app = new kendo.mobile.Application($(document.body), { transition: "slide" });
