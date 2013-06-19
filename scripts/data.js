@@ -1,5 +1,6 @@
 define(["jQuery", "kendo", "config", "utils"], function ($, kendo, config, utils) {
-    var _wcfSchemaData = function (data) {
+    alert("data.JS");
+	var _wcfSchemaData = function (data) {
             return data.value;
         },
 

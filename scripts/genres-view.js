@@ -1,5 +1,6 @@
 define(["jQuery", "kendo", "data"], function ($, kendo, data) {
-    return {
+    alert("genres-view.JS");
+	return {
         onShow: function (e) {
             var btnGrp = $(e.sender.element).find(".select-group").data("kendoMobileButtonGroup");
             if(btnGrp) {

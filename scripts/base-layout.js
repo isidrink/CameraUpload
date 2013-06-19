@@ -1,5 +1,6 @@
 define(["jQuery", "utils", "cart"], function ($, utils, cart) {
-    return {
+    alert("base-layouts.JS");
+	return {
         show: function (showEvt) {
             utils.updateCartBadges($, cart);
         }
