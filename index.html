@@ -1,442 +1,509 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <meta charset="utf-8" />
-        <script src="cordova.js"></script>
-        <script src="Plugins/Child%20Browser/childbrowser.js"></script>
-        
-        <link href="kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
-        <link href="kendo/styles/kendo.indexedlistview.css" rel="stylesheet" />
-        <link href="styles/main.css" rel="stylesheet" />
-    </head>
-    <body id="body">
+<head>
+    <title>Kendo Sushi</title>
+    <link href="http://cdn.kendostatic.com/2012.3.1114/styles/kendo.common.min.css" rel="stylesheet">
+    <link href="http://cdn.kendostatic.com/2012.3.1114/styles/kendo.default.min.css" rel="stylesheet">
+    <link href="http://cdn.kendostatic.com/2012.3.1114/styles/kendo.mobile.all.min.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2012.3.1114/js/kendo.all.min.js"></script>
+    
+    <link rel="stylesheet" href="content/css/style.css">
+	<style>
+	
+	#listview .k-state-selected {
+    background: red;
+}
 
-        <!-- Home Views -->
-
-        <div data-role="view" id="genres-view" data-layout="home-layout" data-title="Albums" data-model="app.genresView.viewModel" data-show="app.genresView.onShow">
-            <ul data-role="listview" data-bind="source: genres" data-template="genre-list-template", data-style="inset"></ul>
+	/*
+	.km-ios .km-navbar{
+		background-image:url('content/images/splash.jpg');
+		background-repeat:no-repeat;
+		background-attachment:fixed;
+		background-position:center top;
+		height:61px;
+		background-color:rgba(0, 0, 0, 1.0);
+		/*background: none repeat scroll 0 0 rgba(100, 100, 100, 0.3);*/
+			
+	}
+	.km-view-title span{
+		float:left;
+		padding:10px 0px 0px 20px;
+	}
+	.km-ios .km-toolbar, .km-ios .km-tabstrip, .km-ios .km-popup .k-item, .km-ios .km-actionsheet > li > a{
+		background-image:none;
+		background-color:transparent;
+	}
+	*/
+	</style>
+</head>
+<body>
+    <div data-role="layout" data-id="default">
+        <header data-role="header">
+        <div data-role="navbar">
+			<img src="content/images/splash.jpg" id="logo">
+            <a class="about-button" data-align="right" href="content/about.html" data-role="button">About</a>
         </div>
+        </header>
 
-        <div data-role="view" id="artists-view" data-layout="home-layout" data-title="Albums" data-model="app.artistsView.viewModel" class="km-insetcontent" style="display: none;">
-            <ul data-role="indexedlistview" data-bind="source: artists" data-template="artist-list-template" data-fixed-headers="true"></ul>
+        <footer data-role="footer" data-id="default">
+        <div data-role="tabstrip">
+            <a href="#edit-listview" data-icon="home">Home</a>
+            <a href="#menu" data-icon="organize">Our menu</a>
+            <a href="#cart" data-icon="cart">Cart</a>
+            <a href="#account" data-icon="contacts">Account</a>
         </div>
-        
-        <div data-role="view" id="albums-view" data-layout="base-layout" data-model="app.albumsView.viewModel" data-show="app.albumsView.show" data-transition="slide:left" style="display: none;">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <a class="nav-button" data-align="left" data-role="backbutton">Back</a>
-                    <span data-role="view-title"></span>
-                </div>
-            </header>
+        </footer>
+    </div>
 
-            <ul id="albums-listview" data-role="listview" data-bind="source: albums" data-auto-bind="false" data-template="album-list-template" data-style="inset" data-endless-scroll="true"></ul>
-        </div>
+	 <div data-role="view" id="edit-listview" data-layout="default" data-model="viewModel" data-before-show="showHomeView" data-title="Products List" data-init="listViewInit">
+		<header data-role="header">
+			<div data-role="navbar">
+				<span data-role="view-title"></span>
+				<a data-align="right" data-role="button" class="nav-button" href="#index">Index</a>
+			</div>
+		</header>
 
-        <div data-role="layout" data-id="home-layout" data-init="app.homeLayout.init" data-show="app.homeLayout.show">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <span data-role="view-title"></span>
-                </div>
-                <ul class="select-group">
-                    <li data-target="#genres-view">Genres</li>
-                    <li data-target="#artists-view">Artists</li>
+		<ul id="listview"></ul>
+
+		<script id="itemTemplate" type="text/x-kendo-template">
+			<a> #=ProductName# </a>
+			<a href="\\#" data-role="button" class="delete" >Delete</a>
+		</script>
+	</div>
+    <!--<div data-title="Kendo sushi" data-role="view" id="index" data-url="/" data-layout="default" data-model="viewModel" data-before-show="showHomeView" data-init="mobileListViewEndlessScrolling">
+        /*<ul
+            id="featured"
+            class="item-list"
+            data-type="flat"
+            data-role="listview"
+            data-template="menuTemplate"
+            data-bind="source: dataSource"
+        ></ul>*/
+		 <ul id="endless-scrolling"></ul>
+		
+    </div>-->
+
+    <div data-title="Menu" data-role="view" id="menu" data-layout="default" data-model="viewModel" data-show="showMenuView">
+        <ul
+            id="menuList"
+            class="item-list"
+            data-role="listview"
+            data-template="menuTemplate"
+            data-bind="source: dataSource"
+        ></ul>
+    </div>
+
+    <div data-role="view" id="cart" data-layout="default" data-title="Cart" data-model="viewModel" data-show="showCartView">
+        <h2 id="total" data-bind="text: showTotal"></h2>
+        <img src="content/images/sad.png" id="empty-icon">
+        <a id="checkout" data-bind="click: checkout" class="red-button" href="#done" data-role="button">Checkout</a>
+        <ul id="cartList"
+            class="item-list"
+            data-template="cartItemTemplate"
+            data-bind="source: added"
+            data-role="listview"
+            data-style="inset"></ul>
+    </div>
+
+    <div data-role="view" id="account" data-layout="default" data-title="My Account">
+        <ul data-role="listview" data-style="inset" data-type="group">
+            <li>
+                Account
+                <ul>
+                    <li>Username<span class="list-item-data">kendoSushi</span></li>
+                    <li>Email<span class="list-item-data">sushi@kendoui.com</span></li>
                 </ul>
-            </header>
-
-            <div data-role="footer">
-                <div data-role="tabstrip">
-                    <a href="#genres-view" data-icon="home">Home</a>
-                    <a href="#search-view" data-icon="search">Search</a>
-                    <a href="#cart-view" data-icon="cart">Cart<span class="cart-badge km-badge" style="display: none;"></span></a>
-                    <a href="#account-view" data-icon="contacts">Account</a>
-                    <a href="#about-view" data-icon="about">About</a>
-                </div>
-            </div>
-        </div>
-
-        <div data-role="layout" data-id="home-layout" data-init="app.homeLayout.init" data-show="app.homeLayout.show" data-platform="android">
-            <div data-role="header">
-                <div data-role="navbar">
-                    <div class="app-icon" data-align="left"></div>
-                    <span data-role="view-title"></span>
-                    <div data-align="right" class="action-buttons">
-                        <a data-role="button" href="#search-view" data-icon="search"></a>
-                        <a data-role="button" href="#cart-view" data-icon="cart"></a>
-                        <a data-role="button" href="#popover-action-overflow" data-rel="popover" data-icon="action-overflow"></a>
-                    </div>
-                </div>
-                <div data-role="tabstrip">
-                    <a href="#genres-view">Genres</a>
-                    <a href="#artists-view">Artists</a>
-                </div>
-            </div>
-
-            <div data-role="popover" id="popover-action-overflow" data-popup='{"height": 110, "width": 125}'>
-                <div data-role="view" data-title="People">
-                    <ul data-role="listview" data-click="app.homeLayout.navigate">
-                        <li data-target="#account-view">Account</li>
-                        <li data-target="#about-view">About</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Search Views -->
-
-        <div data-role="view" id="search-view" data-layout="search-layout" data-title="Search" data-init="app.searchView.init" data-show="app.searchView.show" style="display: none;">
-            <ul id="search-listview" data-role="listview" data-bind="source: results" data-template="album-list-template" data-style="inset" data-endless-scroll="true" data-auto-bind="false"></ul>
-        </div>
-
-        <div data-role="layout" data-id="search-layout" data-show="app.baseLayout.show">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <span data-role="view-title"></span>
-                </div>
-                <div class="search-container">
-                    <input type="text" class="search-text" placeholder="Album title or artist" />
-                    <a data-role="button" data-icon="search" data-click="app.searchView.submitSearch"></a>
-                </div>
-            </header>
-            <div data-role="footer">
-                <div data-role="tabstrip">
-                    <a href="#genres-view" data-icon="home">Home</a>
-                    <a href="#search-view" data-icon="search">Search</a>
-                    <a href="#cart-view" data-icon="cart">Cart<span class="cart-badge km-badge" style="display: none;"></span></a>
-                    <a href="#account-view" data-icon="contacts">Account</a>
-                    <a href="#about-view" data-icon="about">About</a>
-                </div>
-            </div>
-        </div>
-
-        <div data-role="layout" data-id="search-layout" data-platform="android" data-show="app.baseLayout.show">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <a class="nav-button" data-align="left" data-role="backbutton"></a>
-                    <input type="text" class="search-text" placeholder="Album title or artist" />
-                    <div data-align="right" class="action-buttons">
-                        <a data-role="button" data-icon="search" data-click="app.searchView.submitSearch"></a>
-                    </div>
-                </div>
-            </header>
-        </div>
-
-
-        <!-- Cart Checkout Views -->
-
-        <div data-role="view" id="cart-view" data-layout="cart-layout" data-title="Cart" data-model="app.cartView.viewModel" data-init="app.cartView.init" style="display: none;">
-            <header data-role="header" class="cart-header">
-                <div data-role="navbar">
-                    <a class="nav-button" data-align="left" data-role="backbutton" data-bind="visible: isAndroid"></a>
-                    <span data-role="view-title"></span>
-                    <a data-role="button" href="#checkout-view" data-align="right" data-bind="visible: cartHasItems">Checkout</a>
-                </div>
-                <h3>Swipe to Remove Item</h3>
-                <h1>TOTAL: <span class="total" data-bind="text: cart.aggregates.formattedTotal"></span></h1>
-            </header>
-
-            <ul data-role="listview" data-bind="source: items" data-template="cart-list-template" data-style="inset"></ul>
-        </div>
-        
-        <div data-role="view" id="checkout-view" data-layout="base-layout" data-title="Checkout" data-model="app.checkoutView.viewModel" data-before-show="app.checkoutView.beforeShow" data-transition="slide:left" style="display: none;">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <a class="nav-button" data-align="left" data-role="backbutton">Cart</a>
-                    <span data-role="view-title"></span>
-                    <div data-role="button" data-align="right" data-bind="click: submit">Submit</div>
-                </div>
-            </header>
-            
-            <section class="validate" data-role="validator">
-                <ul data-role="listview">
-                    <li>
-                        First Name
-                        <input type="text" name="firstName" placeholder="First Name" data-bind="value: firstName" pattern=".{0,160}" required validationmessage="Required" />
-                    </li>
-                    <li>
-                        Last Name
-                        <input type="text" name="lastName" placeholder="Last Name" data-bind="value: lastName" pattern=".{0,160}" required validationmessage="Required" />
-                    </li>
-                    <li>
-                        Address
-                        <input type="text" name="address" placeholder="Address" data-bind="value: address" pattern=".{3,70}" required validationmessage="Required" />
-                    </li>
-                    <li>
-                        City
-                        <input type="text" name="city" placeholder="City" data-bind="value: city" pattern=".{0,40}" required validationmessage="Required"/>
-                    </li>
-                    <li>
-                        State
-                        <input type="text" name="state" placeholder="State" data-bind="value: state" pattern=".{0,40}" required validationmessage="Required"/>
-                    </li>
-                    <li>
-                        Postal Code
-                        <input type="text" name="zip" placeholder="Postal Code" data-bind="value: zip" pattern=".{5,10}" required validationmessage="Required"/>
-                    </li>
-                    <li>
-                        Country
-                        <input type="text" name="country" placeholder="Country" data-bind="value: country" pattern=".{0,40}" required validationmessage="Required"/>
-                    </li>
-                    <li>
-                        Phone
-                        <input type="text" name="phone" placeholder="Phone" data-bind="value: phone" pattern=".{0,24}" required validationmessage="Required"/>
-                    </li>
-                    <li>
-                        Email
-                        <input type="text" name="email" placeholder="Email Address" data-bind="value: email" pattern=".+@.+\..{2,}" required validationmessage="Required"/>
-                    </li>
+            </li>
+            <li>
+                Notifications
+                <ul>
+                    <li>New products<input type="checkbox" data-role="switch" /></li>
+                    <li>Exclusive promos<input type="checkbox" data-role="switch" checked="checked" /></li>
                 </ul>
-            </section>
+            </li>
+        </ul>
+    </div>
+
+    <div data-role="view" id="done" data-transition="zoom">
+        <header data-role="header"> <div data-role="navbar"> <span data-role="view-title">Done!</span> </div>
+        </header>
+        <div data-role="content" class="km-insetcontent">
+            <img src="content/images/happy.png" id="done-icon">
+            <h2>Thanks for shopping!</h2>
+            <h3>Your sushi is on the way.</h3>
+            <a id="done-button" href="#cart" data-role="button">Done</a>
         </div>
+    </div>
 
-        <div data-role="view" id="checkout-complete-view" data-layout="checkout-complete-layout" data-title="Order Complete" data-model="app.checkoutView.viewModel" data-transition="slide:left" style="display: none;">
-            <h1 class="thank-you">Thank You!</h1>
+    <div data-role="view" id="details" data-transition="slide" data-layout="default" data-model="viewModel" data-show="showDetailsView">
+        <header data-role="header">
+        <div data-role="navbar">
+            <a data-role="backbutton" data-align="left">Back</a>
+            <span data-role="view-title">Item</span>
         </div>
+        </header>
 
-        <div data-role="layout" data-id="cart-layout" data-show="app.cartView.layoutShow" data-platform="ios">
-            <div data-role="footer">
-                <div data-role="tabstrip">
-                    <a href="#genres-view" data-icon="home">Home</a>
-                    <a href="#search-view" data-icon="search">Search</a>
-                    <a href="#cart-view" data-icon="cart">Cart<span class="cart-badge km-badge" style="display: none;"></span></a>
-                    <a href="#account-view" data-icon="contacts">Account</a>
-                    <a href="#about-view" data-icon="about">About</a>
-                </div>
-            </div>
+        <div data-role="content">
+            <aside>
+                <img data-bind="srcPath: currentItem.image" /> <!-- src="content/images/200/#:image#" -->
+                <span class="price" data-bind="format: currentItem.price"></span></span>
+                <a data-role="button" data-bind="click: addToCart">Order</a>
+            </aside>
+            <h2 data-bind="text: currentItem.name"></h2>
+            <p data-bind="text: currentItem.description"></p>
+            <span class="added" data-bind="innerText: currentItem.ordered, visible: showLabel"></span>
         </div>
+    </div>
 
-        <div data-role="layout" data-id="checkout-complete-layout" data-show="app.baseLayout.show">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <span data-role="view-title"></span>
-                </div>
-            </header>
+	<div data-role="view" id="edit-detailview" data-show="detailShow" data-init="detailInit">
+		<header data-role="header">
+			<div data-role="navbar">
+				<a class="nav-button" data-align="left" data-role="backbutton" id="cancel">Cancel</a>
+				<span data-role="view-title">Details</span>
+				<a class="nav-button" data-align="right" data-role="button" id="done">Done</a>
+			</div>
+		</header>
 
-            <div data-role="footer">
-                <div data-role="tabstrip">
-                    <a href="#genres-view" data-icon="home">Home</a>
-                    <a href="#search-view" data-icon="search">Search</a>
-                    <a href="#cart-view" data-icon="cart">Cart<span class="cart-badge km-badge" style="display: none;"></span></a>
-                    <a href="#account-view" data-icon="contacts">Account</a>
-                    <a href="#about-view" data-icon="about">About</a>
-                </div>
-            </div>
-        </div>
+		<form>
+			<ul data-role="listview" data-style="inset" onclick="">
+				<li>
+					<label>Product Name
+						<input type="text" data-bind="value: ProductName"/>
+					</label>
+				</li>
+				<li>
+					Discontinued
+						<input type="checkbox" data-role="switch" data-bind="checked: Discontinued"/>
 
-        <div data-role="layout" data-id="checkout-complete-layout" data-show="app.baseLayout.show" data-platform="android">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <div class="app-icon" data-align="left"></div>
-                    <span data-role="view-title"></span>
-                    <div data-align="right" class="action-buttons">
-                        <a data-role="button" href="#home-view" data-icon="home"></a>
-                    </div>
-                </div>
-            </header>
-        </div>
+				</li>
+				<li>
+					<label>Unit Price
+						<input type="number" value="20" data-bind="value: UnitPrice"/>
+					</label>
+				</li>
+			</ul>
+		</form>
+	</div>
 
+    <script id="menuTemplate" type="text/x-kendo-template">
+        <a data-role="button"
+            data-bind="click: addToCart"
+            data-item-id="#:id#">#:kendo.toString(price, "c")#</a>
+        <a
+            class="details-link"
+            data-role="listview-link"
+            href="\#details?id=#:id#">
+            <img src="content/images/75/#:image#" />
+            <h2>#:name#</h2>
+            <span class="added" data-bind="visible: ordered">Item added to cart #= data.ordered # times.</span>
+        </a>
+    </script>
 
-        <!-- Account Views -->
+    <script id="cartItemTemplate" type="text/x-kendo-template">
+        <a
+            class="red-button"
+            data-bind="click: removeItem"
+            data-item-id="#:id#"
+            data-role="button">&nbsp;&\\#x2716;&nbsp;</a>
+        <a
+            class="details-link"
+            data-role="listview-link"
+            href="\#details?id=#:id#">
+            <img src="content/images/75/#:image#" />
+            <h2>#:name# (x #:ordered#)</h2>
+            <span class="price">total: #:kendo.toString(price * ordered, "c")#</span>
+        </a>
+    </script>
 
-        <div data-role="view" id="account-view" data-layout="account-layout" data-title="Account" style="display: none;" data-model="app.accountView.viewModel" data-before-show="app.accountView.beforeShow" data-show="app.accountView.accountViewShow">
-            <ul id="order-history-list" class="order-history-list"></ul>
-        </div>
+	<script id="endless-scrolling-template" type="text/x-kendo-template">
+		<div class="tweet">
+			<img class="pullImage" src="#= user.profile_image_url #" alt="#= user.name #" />#= text #
+			<div class="metadata">
+				<a class="sublink" target="_blank" href="http://twitter.com/\\#!/#= user.screen_name #/status/#= id_str #" data-rel="external" rel="nofollow">#= kendo.toString(new Date(Date.parse(created_at)), "dd MMM HH:mm") #</a>
+				|
+				<a class="sublink" href="http://twitter.com/#= user.screen_name #" rel="nofollow" data-rel="external">#= user.name #</a>
+			</div>
+		</div>
+	</script>
 
-        <div data-role="view" id="login-view" data-layout="base-layout" data-title="Log In" style="display: none;" data-model="app.accountView.viewModel" data-init="app.accountView.loginInit">
-            <p>For demonstration purposes you can register a new username, or use:</p>
-            <ul>
-                <li><strong>Username:</strong> owner</li>
-                <li><strong>Password:</strong> p@ssword123</li>
-            </ul>
+<script>
+    var maxIdRegExp = /max_id=\d*/,
+        sinceIdRegExp = /since_id=\d*/;
 
-            <input type="text" placeholder="Username" data-bind="value: loginUsername" />
-            <input type="password" placeholder="Password" data-bind="value: loginPassword" />
-            <div type="button" data-role="button" data-bind="click: login">Log In</div>
-            <a href="#register-view" data-role="button">Register</a>
-        </div>
-        
-        <div data-role="view" id="register-view" data-layout="base-layout" data-title="Create Account" style="display: none;" data-model="app.accountView.viewModel">
-            <input type="text" placeholder="Username" data-bind="value: registerUsername" />
-            <input type="password" placeholder="Password" data-bind="value: registerPassword" />
-            <input type="password" placeholder="Confirm Password" data-bind="value: registerPasswordRetyped" />
-            <input type="button" data-role="button" value="Register" data-bind="click: register" />
-        </div>
+    function getQueryValue(queryString, regexp) {
+        var value = regexp.exec(queryString);
 
-        <div data-role="layout" data-id="account-layout" data-show="app.accountView.layoutShow">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <span data-role="view-title"></span>
-                    <span data-role="button" data-bind="click: logout" data-align="right">Log Off</span>
-                </div>
-                <h2><span data-bind="text: userName" class="user-name"></span>'s Order History</h2>
-            </header>
-            <div data-role="footer">
-                <div data-role="tabstrip">
-                    <a href="#genres-view" data-icon="home">Home</a>
-                    <a href="#search-view" data-icon="search">Search</a>
-                    <a href="#cart-view" data-icon="cart">Cart<span class="cart-badge km-badge" style="display: none;"></span></a>
-                    <a href="#account-view" data-icon="contacts">Account</a>
-                    <a href="#about-view" data-icon="about">About</a>
-                </div>
-            </div>
+        if (value) {
+            value = value[0].split("=")[1];
+        }
 
-            <div data-role="popover" id="popover-account-overflow" data-popup='{"height": 55, "width": 125}'>
-                <div data-role="view" data-title="People">
-                    <ul data-role="listview" data-click="app.accountView.action">
-                        <li data-action="logout">Log Off</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        return value;
+    }
 
-        <div data-role="layout" data-id="account-layout" data-show="app.accountView.layoutShow" data-platform="android">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <a class="nav-button" data-align="left" data-role="backbutton"></a>
-                    <span data-role="view-title"></span>
-                    <div data-align="right" class="action-buttons">
-                        <a data-role="button" href="#popover-account-overflow" data-rel="popover" data-icon="action-overflow"></a>
-                    </div>
-                </div>
-                <h2><span data-bind="text: userName" class="user-name"></span>'s Order History</h2>
-            </header>
-        </div>
+    function mobileListViewEndlessScrolling() {
+            var dataSource = new kendo.data.DataSource({
+                pageSize: 50,
+                serverPaging: true,
+                transport: {
+                    read: {
+                        url: "http://demos.kendoui.com/service/Twitter/Search", // the remote service url - Twitter API v1.1
+                        dataType: "jsonp" // JSONP (JSON with padding) is required for cross-domain AJAX
+                    },
+                    parameterMap: function(options) {
+                        var parameters = {
+                            q: "javascript", //additional parameters sent to the remote service
+                            max_id: max_id_str, //additional parameters sent to the remove service
+                            count: options.pageSize
+                        }
 
+                        return parameters;
+                    }
+                },
+                schema: { // describe the result format
+                    parse: function(response) {
+                        if (response.search_metadata) {
+                            max_id_str = getQueryValue(response.search_metadata.next_results, maxIdRegExp); //retrieve max_id for the endless scrolling
+                        }
+                        return response;
+                    },
+                    data: function(data) {
+                        return data.statuses || [];
+                    },
+                    total: function() { return 100000 }
+                }
+            }),
+            max_id_str;
 
-        <!-- About Views -->
+        $("#endless-scrolling").kendoMobileListView({
+            dataSource: dataSource,
+            template: $("#endless-scrolling-template").text(),
+            scrollThreshold: 30, //threshold in pixels
+            endlessScroll: true
+        });
+    }
+</script>
 
-        <div data-role="view" id="about-view" data-layout="about-layout" data-title="About" data-model="app.aboutView.viewModel" style="display: none;">
-            <img src="Images/awesomesauce-logo.png"/>
-            <h1>Kendo UI Mobile Music Store</h1>
-            <p>The Mobile Music Store is a demo app built using Kendo UI Mobile.</p>
-            
-            <footer>
-                <div class="footer-images"><img src="Images/kendo-ui-logo.png"/></div>
-                <a data-role="button" data-rel="actionsheet" href="#learnmore-actions">Learn More about Kendo UI</a>
-            </footer>
+<style scoped>
+	.km-view-title{
+			height:61px;
+			background-color:rgba(0, 0, 0, 1.0);
+	}
+	.km-ios, .km-ios .km-content{
+	background:transparent;
+	}
+	.km-view{
+		/*background-image:url('content/images/background2.jpg');
+		background-color:rgba(0, 0, 0, 1.0);*/
+		background-color: #6c2408;
+		background-image: linear-gradient(to bottom, #000, #636363);
+		border-color: #D14600;
+		box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+		color: white;
+	}
 
-            <ul data-role="actionsheet" id="learnmore-actions" data-popup='{"direction": "left"}'>
-                <li class="km-actionsheet-title">Learn More about Kendo UI</li>
-                <li><a href="#" data-action="app.aboutView.viewModel.openKendoWeb">Visit www.kendoui.com</a></li>
-                <li><a href="#" data-action="app.aboutView.viewModel.openSource">View Source for This App</a></li>
-            </ul>
-        </div>
-
-        <div data-role="layout" data-id="about-layout" data-show="app.baseLayout.show">
-            <div data-role="footer">
-                <div data-role="tabstrip">
-                    <a href="#genres-view" data-icon="home">Home</a>
-                    <a href="#search-view" data-icon="search">Search</a>
-                    <a href="#cart-view" data-icon="cart">Cart<span class="cart-badge km-badge" style="display: none;"></span></a>
-                    <a href="#account-view" data-icon="contacts">Account</a>
-                    <a href="#about-view" data-icon="about">About</a>
-                </div>
-            </div>
-        </div>
-
-        <div data-role="layout" data-id="about-layout" data-platform="android" data-show="app.baseLayout.show">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <a href="#genres-view" class="nav-button" data-align="left" data-role="backbutton"></a>
-                    <span data-role="view-title"></span>
-                    <div data-align="right" class="action-buttons">
-                        <a data-role="button" href="#home-view" data-icon="home"></a>
-                    </div>
-                </div>
-            </header>
-        </div>
-
-
-        <!-- Error Views -->
-
-        <div data-role="modalview" id="error-view" style="display: none; width: 95%; height: 90%;">
-            <div data-role="header">
-                <div data-role="navbar">
-                    <span>Error</span>
-                    <a data-click="app.closeErrorModal" data-role="button" data-align="right">Close</a>
-                </div>
-            </div>
-            
-            <div class="message"></div>
-        </div>
-
-
-        <!-- Shared Layouts -->
-
-        <div data-role="layout" data-id="base-layout" data-show="app.baseLayout.show">
-            <div data-role="footer">
-                <div data-role="tabstrip">
-                    <a href="#genres-view" data-icon="home">Home</a>
-                    <a href="#search-view" data-icon="search">Search</a>
-                    <a href="#cart-view" data-icon="cart">Cart<span class="cart-badge km-badge" style="display: none;"></span></a>
-                    <a href="#account-view" data-icon="contacts">Account</a>
-                    <a href="#about-view" data-icon="about">About</a>
-                </div>
-            </div>
-        </div>
-
-        <div data-role="layout" data-id="base-layout" data-show="app.baseLayout.show" data-platform="android">
-            <header data-role="header">
-                <div data-role="navbar">
-                    <a class="nav-button" data-align="left" data-role="backbutton"></a>
-                    <span data-role="view-title"></span>
-                </div>
-            </header>
-        </div>
+    .tweet {
+        font-size: .8em;
+        line-height: 1.4em;
+    }
+    .pullImage {
+        width: 64px;
+        height: 64px;
+        border-radius: 3px;
+        float: left;
+        margin-right: 10px;
+    }
+    .sublink {
+        font-size: .9em;
+        font-weight: normal;
+        display: inline-block;
+        padding: 3px 3px 0 0;
+        text-decoration: none;
+        opacity: .8;
+    }
+</style>
 
 
-        <!-- Templates -->
-
-        <script id="genre-list-template" type="text/x-kendo-template">
-            <a href="\#albums-view?field=GenreId&operator=eq&value=#=GenreId#&title=#:encodeURIComponent(Name).replace("'", "%27")#">#=Name#</a>
-        </script>
-
-        <script id="artist-list-template" type="text/x-kendo-template">
-            <a href="\#albums-view?field=ArtistId&operator=eq&value=#=ArtistId#&title=#:encodeURIComponent(Name).replace("'", "%27")#">#=Name#</a>
-        </script>
-
-        <script id="album-list-template" type="text/x-kendo-template">
-            <img class="album-art" data-bind="attr: {src: albumArtUrl}" />
-            <div class="album-cart" data-role="button" data-bind="click: onAddToCart"><span data-bind="text: qtyInCart, attr: {class: buttonClasses}"></span><span class="km-icon km-cart"></span></div>
-            <h1 class="album-title" data-bind="text: Title"></h1>
-            <h2 class="album-artist" data-bind="text: Artist.Name"></h2>
-            <span class="album-price" data-bind="text: albumPrice"></span>
-        </script>
-
-        <script id="artist-filter-template" type="text/x-kendo-template">
-            <a href="\#artists-view?value=#=data#" id="#=data#">#=data#</a>
-        </script>
-
-        <script id="cart-list-template" type="text/x-kendo-template">
-            <div data-role="touch" data-enable-swipe="1" data-swipe="app.cartView.onToggleDeleteMode" data-hold="app.cartView.onToggleDeleteMode">
-                <div class="qty-and-price">
-                    <strong data-bind="invisible: deleteMode">Qty</strong>
-                    <input type="number" data-bind="value: qty, invisible: deleteMode" min="1" max="99" />
-                    <span class="cart-delete-button" data-role="button" data-click="app.cartView.onRemove" data-bind="visible: deleteMode" data-icon="trash"></span>
-                </div>
-                <img class="album-art" data-bind="attr: {src: albumArtUrl}" />
-                <h1 class="album-title" data-bind="text: album.Title"></h1>
-                <h2 class="album-artist" data-bind="text: album.Artist.Name"></h2>
-                <span class="album-price" data-bind="text: albumPrice"></span>
-                <div class="subtotal">Subtotal: <span data-bind="text: albumSubtotal"></span></div>
-            </div>
-        </script>
-
-        <script id="order-history-header-template" type="text/x-kendo-template">
-            <span>Order\# #=data.items[0].OrderId#</span>
-            <span>#=app.accountView.calcOrderTotal(data.items)#</span>
-            <span>#=kendo.toString(data.items[0].OrderDate, "g")#</span>
-        </script>
-
-        <script id="order-history-template" type="text/x-kendo-template">
-            <div>#=Title#</div>
-            <div>#=Quantity# at #=kendo.toString(UnitPrice, "c")# each</div>
-        </script>
 
 
-        <!-- Scripts -->
+<style scoped>
+    /*.km-ios #edit-listview .km-navbar,
+    .km-ios #edit-detailview .km-navbar {
+        background: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0, rgba(255, 255, 255, 0.5)), color-stop(0.06, rgba(255, 255, 255, 0.45)), color-stop(0.5, rgba(255, 255, 255, 0.2)), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(1, rgba(100, 100, 100, 0))), url(../../content/shared/images/patterns/pattern1.png);
+        background: -moz-linear-gradient(center top , rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.45) 6%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.15) 50%, rgba(100, 100, 100, 0)), url(../../content/shared/images/patterns/pattern1.png);
+    }
+    .km-ios #edit-listview .km-navbar .km-button,
+    .km-ios #edit-detailview .km-navbar .km-button {
+        background-color: #000;
+    }
+    .km-ios #edit-detailview #done {
+        background-color: Green;
+    }
+    .km-tablet .km-ios #edit-listview .km-view-title,
+    .km-tablet .km-ios #edit-detailview .km-view-title {
+        color: #fff;
+        text-shadow: 0 -1px rgba(0,0,0,.5);
+    }
+    .km-ios #edit-listview .km-content,
+    .km-ios #edit-detailview .km-content,
+    .km-ios #edit-detailview .km-insetcontent,
+    .km-ios #edit-listview li,
+    .km-ios #edit-detailview li {
+        background: #373737;
+    }
+    .km-ios #edit-listview li > a,
+    .km-ios #edit-detailview li,
+    .km-ios #edit-detailview input,
+    .km-ios #edit-detailview li > a {
+        text-decoration: none;
+        color: #fff;
+    }
 
-        <script data-main="scripts/main.js" src="scripts/require.js"></script>
-    </body>
+    .km-ios #edit-detailview .km-listinset > li,
+    .km-ios #edit-detailview .km-listgroupinset .km-list > li,
+    .km-ios #edit-detailview .km-listinset > li:first-child,
+    .km-ios #edit-detailview .km-listgroupinset .km-list >  li:first-child,
+    .km-ios #edit-detailview .km-listinset > li:last-child,
+    .km-ios #edit-detailview .km-listgroupinset .km-list >  li:last-child {
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        border-color: #565656;
+    }
+    .km-ios #edit-detailview .km-listinset > li:first-child,
+    .km-ios #edit-detailview .km-listgroupinset .km-list > li:first-child {
+        border-width: 1px;
+    }
+    .km-ios #edit-detailview .km-listinset > li,
+    .km-ios #edit-detailview .km-listgroupinset .km-list > li {
+        border-width: 0 1px 1px;
+    }*/
+    #edit-listview .delete {
+        display:none;
+        position: absolute;
+        top: .15em;
+        right: .5em;
+        width: 60px;
+        background-color: #bd2729;
+    }
+</style>
+
+<script>
+    var crudServiceBaseUrl = "http://demos.kendoui.com/service",
+        dataSource = new kendo.data.DataSource({
+            transport: {
+                read:  {
+                    url: crudServiceBaseUrl + "/Products",
+                    dataType: "jsonp"
+                },
+                update: {
+                    url: crudServiceBaseUrl + "/Products/Update",
+                    dataType: "jsonp"
+                },
+                destroy: {
+                    url: crudServiceBaseUrl + "/Products/Destroy",
+                    dataType: "jsonp"
+                },
+                parameterMap: function(options, operation) {
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                }
+            },
+            schema: {
+                model: {
+                    id: "ProductID",
+                    fields: {
+                        ProductID: { editable: false, nullable: true },
+                        ProductName: "ProductName",
+                        UnitPrice: { type: "number" },
+                        Discontinued: { type: "boolean" }
+                    }
+                }
+            }
+        });
+
+    function listViewInit(e) {
+        e.view.element.find("#listview").kendoMobileListView({
+            dataSource: dataSource,
+			selectable: true,
+            template: $("#itemTemplate").html()
+        })
+        .kendoTouch({
+            filter: ">li",
+            enableSwipe: true,
+            touchstart: touchstart,
+            tap: navigate,
+            swipe: swipe
+        });
+    }
+
+    function navigate(e) {
+        var itemUID = $(e.touch.currentTarget).data("uid");
+        kendo.mobile.application.navigate("#edit-detailview?uid=" + itemUID);
+    }
+
+    function swipe(e) {
+        var button = kendo.fx($(e.touch.currentTarget).find("[data-role=button]"));
+        button.expand().duration(200).play();
+    }
+
+    function touchstart(e) {
+        var target = $(e.touch.initialTouch),
+            listview = $("#listview").data("kendoMobileListView"),
+            model,
+            button = $(e.touch.target).find("[data-role=button]:visible");
+
+        if (target.closest("[data-role=button]")[0]) {
+            model = dataSource.getByUid($(e.touch.target).attr("data-uid"));
+            dataSource.remove(model);
+
+            //prevent `swipe`
+            this.events.cancel();
+            e.event.stopPropagation();
+        } else if (button[0]) {
+            button.hide();
+
+            //prevent `swipe`
+            this.events.cancel();
+        } else {
+            listview.items().find("[data-role=button]:visible").hide();
+        }
+    }
+
+    function detailShow(e) {
+        var model = dataSource.getByUid(e.view.params.uid);
+
+        kendo.bind(e.view.element, model, kendo.mobile.ui);
+    }
+
+    function detailInit(e) {
+        var view = e.view;
+        view.element.find("#done").data("kendoMobileButton").bind("click", function() {
+            dataSource.one("change", function() {
+                view.loader.hide();
+                window.kendoMobileApplication.navigate("#:back");
+            });
+
+            view.loader.show();
+            dataSource.sync();
+        });
+
+        view.element.find("#cancel").data("kendoMobileBackButton").bind("click", function(e) {
+            e.preventDefault();
+            dataSource.one("change", function() {
+                view.loader.hide();
+                window.kendoMobileApplication.navigate("#:back");
+            });
+
+            view.loader.show();
+            dataSource.cancelChanges();
+        });
+    }
+</script>
+
+
+    <script>
+        app = new kendo.mobile.Application($(document.body), { transition: "slide" });
+    </script>
+</body>
 </html>
