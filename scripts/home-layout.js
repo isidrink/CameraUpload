@@ -1,5 +1,4 @@
 define(["jQuery", "utils", "cart"], function ($, utils, cart) {
-   alert("home-layout.JS");
    return {
         init: function (e) {
             $(e.sender.element).find(".select-group").kendoMobileButtonGroup({

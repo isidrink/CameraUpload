@@ -1,6 +1,6 @@
-define(["jQuery", "kendo", "kendoIndexedListView", "data", "config", "utils", "cart", "home-layout", "base-layout", "artists-view", "genres-view", "albums-view", "search-view", "cart-view", "checkout-view", "account-view", "about-view"],
-       function($, kendo,  x,                       data,   config,   utils,   cart,   homeLayout,    baseLayout,    artistsView,    genresView,    albumsView,    searchView,    cartView,    checkoutView,    accountView, aboutView) {
-alert("APP.JS");
+define(["jQuery", "kendo", "kendoIndexedListView", "beers-view", "data", "config", "utils", "cart", "home-layout", "base-layout", "artists-view", "genres-view", "albums-view", "search-view", "cart-view", "checkout-view", "account-view", "about-view"],
+       function($, kendo,  x,                      , beersView, data,   config,   utils,   cart,   homeLayout,    baseLayout,    artistsView,    genresView,    albumsView,    searchView,    cartView,    checkoutView,    accountView, aboutView) {
+
     var _onError = function (error, url, line) {
         utils.showError(error);
     };
@@ -26,6 +26,7 @@ alert("APP.JS");
         baseLayout: baseLayout,
         albumsView: albumsView,
         artistsView: artistsView,
+         beersView: beersView,
         genresView: genresView,
         searchView: searchView,
         cartView: cartView,

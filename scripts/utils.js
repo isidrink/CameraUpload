@@ -1,6 +1,6 @@
 define([], function () {
     var _kendoApp;
-	alert("UTILS.JS");
+
     return {
         init: function (kendoApp) {
             _kendoApp = kendoApp;
