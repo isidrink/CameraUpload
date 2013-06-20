@@ -1,6 +1,6 @@
 define(["jQuery", "kendo", "config", "utils", "data", "cart", "albums"], function ($, kendo, config, utils, data, cart, albums) {
     var _viewElement,
-      alert("search-view.JS");  
+        
         _buildSearchFilter = function (term) {
             return {
                 logic: "or",

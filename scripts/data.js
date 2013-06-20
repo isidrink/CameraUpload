@@ -1,6 +1,5 @@
 define(["jQuery", "kendo", "config", "utils"], function ($, kendo, config, utils) {
-    alert("data.JS");
-	var _wcfSchemaData = function (data) {
+    var _wcfSchemaData = function (data) {
             return data.value;
         },
 
@@ -46,8 +45,6 @@ define(["jQuery", "kendo", "config", "utils"], function ($, kendo, config, utils
         },
         
         genresList: new kendo.data.DataSource(new DataSourceConfig(config.genresUrl, "Name")),
-        
-        beersList: new kendo.data.DataSource(new DataSourceConfig(config.beersUrl, "CERVESERA")),
         
         artistsList: new kendo.data.DataSource(new DataSourceConfig(config.artistsUrl, "Name", {
             serverFiltering: true,

@@ -21,10 +21,6 @@
         <div data-role="view" id="artists-view" data-layout="home-layout" data-title="Albums" data-model="app.artistsView.viewModel" class="km-insetcontent" style="display: none;">
             <ul data-role="indexedlistview" data-bind="source: artists" data-template="artist-list-template" data-fixed-headers="true"></ul>
         </div>
-		
-		<div data-role="view" id="beers-view" data-layout="home-layout" data-title="Beers" data-model="app.beersView.viewModel" class="km-insetcontent" style="display: none;">
-            <ul data-role="indexedlistview" data-bind="source: beers" data-template="artist-list-template" data-fixed-headers="true"></ul>
-        </div>
         
         <div data-role="view" id="albums-view" data-layout="base-layout" data-model="app.albumsView.viewModel" data-show="app.albumsView.show" data-transition="slide:left" style="display: none;">
             <header data-role="header">
@@ -45,7 +41,6 @@
                 <ul class="select-group">
                     <li data-target="#genres-view">Genres</li>
                     <li data-target="#artists-view">Artists</li>
-					<li data-target="#beers-view">Beers</li>
                 </ul>
             </header>
 
@@ -60,7 +55,7 @@
             </div>
         </div>
 
-        <!--<div data-role="layout" data-id="home-layout" data-init="app.homeLayout.init" data-show="app.homeLayout.show" data-platform="android">
+        <div data-role="layout" data-id="home-layout" data-init="app.homeLayout.init" data-show="app.homeLayout.show" data-platform="android">
             <div data-role="header">
                 <div data-role="navbar">
                     <div class="app-icon" data-align="left"></div>
@@ -85,7 +80,7 @@
                     </ul>
                 </div>
             </div>
-        </div>-->
+        </div>
 
 
         <!-- Search Views -->
@@ -115,7 +110,7 @@
             </div>
         </div>
 
-        <!--<div data-role="layout" data-id="search-layout" data-platform="android" data-show="app.baseLayout.show">
+        <div data-role="layout" data-id="search-layout" data-platform="android" data-show="app.baseLayout.show">
             <header data-role="header">
                 <div data-role="navbar">
                     <a class="nav-button" data-align="left" data-role="backbutton"></a>
@@ -125,7 +120,7 @@
                     </div>
                 </div>
             </header>
-        </div>-->
+        </div>
 
 
         <!-- Cart Checkout Views -->
@@ -133,7 +128,7 @@
         <div data-role="view" id="cart-view" data-layout="cart-layout" data-title="Cart" data-model="app.cartView.viewModel" data-init="app.cartView.init" style="display: none;">
             <header data-role="header" class="cart-header">
                 <div data-role="navbar">
-                    <!--<a class="nav-button" data-align="left" data-role="backbutton" data-bind="visible: isAndroid"></a>-->
+                    <a class="nav-button" data-align="left" data-role="backbutton" data-bind="visible: isAndroid"></a>
                     <span data-role="view-title"></span>
                     <a data-role="button" href="#checkout-view" data-align="right" data-bind="visible: cartHasItems">Checkout</a>
                 </div>
@@ -229,7 +224,7 @@
             </div>
         </div>
 
-        <!--<div data-role="layout" data-id="checkout-complete-layout" data-show="app.baseLayout.show" data-platform="android">
+        <div data-role="layout" data-id="checkout-complete-layout" data-show="app.baseLayout.show" data-platform="android">
             <header data-role="header">
                 <div data-role="navbar">
                     <div class="app-icon" data-align="left"></div>
@@ -239,7 +234,7 @@
                     </div>
                 </div>
             </header>
-        </div>-->
+        </div>
 
 
         <!-- Account Views -->
@@ -295,7 +290,7 @@
             </div>
         </div>
 
-        <!--<div data-role="layout" data-id="account-layout" data-show="app.accountView.layoutShow" data-platform="android">
+        <div data-role="layout" data-id="account-layout" data-show="app.accountView.layoutShow" data-platform="android">
             <header data-role="header">
                 <div data-role="navbar">
                     <a class="nav-button" data-align="left" data-role="backbutton"></a>
@@ -306,7 +301,7 @@
                 </div>
                 <h2><span data-bind="text: userName" class="user-name"></span>'s Order History</h2>
             </header>
-        </div>-->
+        </div>
 
 
         <!-- About Views -->
@@ -340,7 +335,7 @@
             </div>
         </div>
 
-        <!--<div data-role="layout" data-id="about-layout" data-platform="android" data-show="app.baseLayout.show">
+        <div data-role="layout" data-id="about-layout" data-platform="android" data-show="app.baseLayout.show">
             <header data-role="header">
                 <div data-role="navbar">
                     <a href="#genres-view" class="nav-button" data-align="left" data-role="backbutton"></a>
@@ -350,7 +345,7 @@
                     </div>
                 </div>
             </header>
-        </div>-->
+        </div>
 
 
         <!-- Error Views -->
@@ -381,14 +376,14 @@
             </div>
         </div>
 
-         <!--<div data-role="layout" data-id="base-layout" data-show="app.baseLayout.show" data-platform="android">
+        <div data-role="layout" data-id="base-layout" data-show="app.baseLayout.show" data-platform="android">
             <header data-role="header">
                 <div data-role="navbar">
                     <a class="nav-button" data-align="left" data-role="backbutton"></a>
                     <span data-role="view-title"></span>
                 </div>
             </header>
-        </div>-->
+        </div>
 
 
         <!-- Templates -->

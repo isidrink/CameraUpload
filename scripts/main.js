@@ -20,6 +20,5 @@ require(["jQuery", "app"], function($, application) {
     $(function() {
         app = application
         application.init();
-		
     });
 });
