@@ -1,322 +1,172 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-<head>
-    <title>Kendo Sushi</title>
-        <link href="kendo/styles/kendo.jitterz.mobile.all.css" rel="stylesheet" />
-    <link href="kendo/styles/kendo.mobile.all.min.css" rel="stylesheet" />
-    <script src="kendo/js/jquery.min.js"></script>
-    <script src="kendo/js/kendo.mobile.min.js"></script>
-	
-    <link rel="stylesheet" href="content/css/style.css">
-	<style>
-	
-	
-	/*
-	.km-ios .km-navbar{
-		background-image:url('content/images/splash.jpg');
-		background-repeat:no-repeat;
-		background-attachment:fixed;
-		background-position:center top;
-		height:61px;
-		background-color:rgba(0, 0, 0, 1.0);
-		/*background: none repeat scroll 0 0 rgba(100, 100, 100, 0.3);*/
-			
-	}
-	.km-view-title span{
-		float:left;
-		padding:10px 0px 0px 20px;
-	}
-	.km-ios .km-toolbar, .km-ios .km-tabstrip, .km-ios .km-popup .k-item, .km-ios .km-actionsheet > li > a{
-		background-image:none;
-		background-color:transparent;
-	}
-	*/
-	</style>
-</head>
-<body>
-    <div data-role="layout" data-id="default">
-        <header data-role="header">
-        <div data-role="navbar">
-			<img src="content/images/splash.jpg" id="logo">
-            <a class="about-button" data-align="right" href="content/about.html" data-role="button">About</a>
-        </div>
-        </header>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>PhoneGap</title>
+    <style type="text/css">
+        div {border: 1px solid black;}
+        input {width: 100%;}
+    </style>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      
+    var deviceReady = false;
 
-        <footer data-role="footer" data-id="default">
-        <div data-role="tabstrip">
-            <a href="#index" data-icon="home">Home</a>
-            <a href="#menu" data-icon="organize">Our menu</a>
-            <a href="#cart" data-icon="cart">Cart</a>
-            <a href="#account" data-icon="contacts">Account</a>
-        </div>
-        </footer>
-    </div>
-	<div data-role="view" id="buttongroup-navbar" id="index" data-url="/" data-layout="default" data-model="viewModel" data-before-show="showHomeView" data-init="initNameSource">
-		<header data-role="header">
-			<div data-role="navbar">
-				<ul data-role="buttongroup" data-index="0" data-select="regroup">
-					<li>
-						By Name
-					</li>
-					<li>
-						By Family
-					</li>
-				</ul>
-				<a data-align="right" data-role="button" class="nav-button" href="#index">Index</a>
-			</div>
-		</header>
-		<ul data-role="listview" data-type="group" data-source="nameSource" data-template="nameTemplate" data-fixed-headers="true">
-		</ul>
-	</div>
+    /**
+     * Take picture with camera
+     */
+    function takePicture() {
+        navigator.camera.getPicture(
+            function(uri) {
+                var img = document.getElementById('camera_image');
+                img.style.visibility = "visible";
+                img.style.display = "block";
+                img.src = uri;
+                document.getElementById('camera_status').innerHTML = "Success";
+            },
+            function(e) {
+                console.log("Error getting picture: " + e);
+                document.getElementById('camera_status').innerHTML = "Error getting picture.";
+            },
+            { quality: 50, destinationType: navigator.camera.DestinationType.FILE_URI});
+    };
 
-    <div data-title="Menu" data-role="view" id="menu" data-layout="default" data-model="viewModel" data-show="showMenuView">
-        <ul
-            id="menuList"
-            class="item-list"
-            data-role="listview"
-            data-template="menuTemplate"
-            data-bind="source: dataSource"
-        ></ul>
-    </div>
-
-    <div data-role="view" id="cart" data-layout="default" data-title="Cart" data-model="viewModel" data-show="showCartView">
-        <h2 id="total" data-bind="text: showTotal"></h2>
-        <img src="content/images/sad.png" id="empty-icon">
-        <a id="checkout" data-bind="click: checkout" class="red-button" href="#done" data-role="button">Checkout</a>
-        <ul id="cartList"
-            class="item-list"
-            data-template="cartItemTemplate"
-            data-bind="source: added"
-            data-role="listview"
-            data-style="inset"></ul>
-    </div>
-
-    <div data-role="view" id="account" data-layout="default" data-title="My Account">
-        <ul data-role="listview" data-style="inset" data-type="group">
-            <li>
-                Account
-                <ul>
-                    <li>Username<span class="list-item-data">kendoSushi</span></li>
-                    <li>Email<span class="list-item-data">sushi@kendoui.com</span></li>
-                </ul>
-            </li>
-            <li>
-                Notifications
-                <ul>
-                    <li>New products<input type="checkbox" data-role="switch" /></li>
-                    <li>Exclusive promos<input type="checkbox" data-role="switch" checked="checked" /></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-
-    <div data-role="view" id="done" data-transition="zoom">
-        <header data-role="header"> <div data-role="navbar"> <span data-role="view-title">Done!</span> </div>
-        </header>
-        <div data-role="content" class="km-insetcontent">
-            <img src="content/images/happy.png" id="done-icon">
-            <h2>Thanks for shopping!</h2>
-            <h3>Your sushi is on the way.</h3>
-            <a id="done-button" href="#cart" data-role="button">Done</a>
-        </div>
-    </div>
-
-    <div data-role="view" id="details" data-transition="slide" data-layout="default" data-model="viewModel" data-show="showDetailsView">
-        <header data-role="header">
-        <div data-role="navbar">
-            <a data-role="backbutton" data-align="left">Back</a>
-            <span data-role="view-title">Item</span>
-        </div>
-        </header>
-
-        <div data-role="content">
-            <aside>
-                <img data-bind="srcPath: currentItem.image" /> <!-- src="content/images/200/#:image#" -->
-                <span class="price" data-bind="format: currentItem.price"></span></span>
-                <a data-role="button" data-bind="click: addToCart">Order</a>
-            </aside>
-            <h2 data-bind="text: currentItem.name"></h2>
-            <p data-bind="text: currentItem.description"></p>
-            <span class="added" data-bind="innerText: currentItem.ordered, visible: showLabel"></span>
-        </div>
-    </div>
-
-	<div data-role="view" id="edit-detailview" data-show="detailShow" data-init="detailInit">
-		<header data-role="header">
-			<div data-role="navbar">
-				<a class="nav-button" data-align="left" data-role="backbutton" id="cancel">Cancel</a>
-				<span data-role="view-title">Details</span>
-				<a class="nav-button" data-align="right" data-role="button" id="done">Done</a>
-			</div>
-		</header>
-
-		<form>
-			<ul data-role="listview" data-style="inset" onclick="">
-				<li>
-					<label>Product Name
-						<input type="text" data-bind="value: ProductName"/>
-					</label>
-				</li>
-				<li>
-					Discontinued
-						<input type="checkbox" data-role="switch" data-bind="checked: Discontinued"/>
-
-				</li>
-				<li>
-					<label>Unit Price
-						<input type="number" value="20" data-bind="value: UnitPrice"/>
-					</label>
-				</li>
-			</ul>
-		</form>
-	</div>
-
-    <script id="menuTemplate" type="text/x-kendo-template">
-        <a data-role="button"
-            data-bind="click: addToCart"
-            data-item-id="#:id#">#:kendo.toString(price, "c")#</a>
-        <a
-            class="details-link"
-            data-role="listview-link"
-            href="\#details?id=#:id#">
-            <img src="content/images/75/#:image#" />
-            <h2>#:name#</h2>
-            <span class="added" data-bind="visible: ordered">Item added to cart #= data.ordered # times.</span>
-        </a>
-    </script>
-
-    <script id="cartItemTemplate" type="text/x-kendo-template">
-        <a
-            class="red-button"
-            data-bind="click: removeItem"
-            data-item-id="#:id#"
-            data-role="button">&nbsp;&\\#x2716;&nbsp;</a>
-        <a
-            class="details-link"
-            data-role="listview-link"
-            href="\#details?id=#:id#">
-            <img src="content/images/75/#:image#" />
-            <h2>#:name# (x #:ordered#)</h2>
-            <span class="price">total: #:kendo.toString(price * ordered, "c")#</span>
-        </a>
-    </script>
-
-	
-<script>
-    nameSource = kendo.data.DataSource.create({
-        data: [
-                  { firstName: "Ann", lastName: "Devon", firstLetter: "A", lastLetter: "D", photo: '/content/mobilethemebuilder/images/ann.jpg' },
-                  { firstName: "Annette", lastName: "Roulet", firstLetter: "A", lastLetter: "R", photo: '/content/mobilethemebuilder/images/annette.jpg' },
-                  { firstName: "Antonio", lastName: "Moreno", firstLetter: "A", lastLetter: "M", photo: '/content/mobilethemebuilder/images/antonio.jpg' },
-                  { firstName: "Carine", lastName: "Schmitt", firstLetter: "C", lastLetter: "S", photo: '/content/mobilethemebuilder/images/carine.jpg' },
-                  { firstName: "Catherine", lastName: "Dewey", firstLetter: "C", lastLetter: "D", photo: '/content/mobilethemebuilder/images/catherine.jpg' },
-                  { firstName: "Daniel", lastName: "Tonini", firstLetter: "D", lastLetter: "T", photo: '/content/mobilethemebuilder/images/daniel.jpg' },
-                  { firstName: "Diego", lastName: "Roel", firstLetter: "D", lastLetter: "R", photo: '/content/mobilethemebuilder/images/diego.jpg' },
-                  { firstName: "Eduardo", lastName: "Saavedra", firstLetter: "E", lastLetter: "S", photo: '/content/mobilethemebuilder/images/eduardo.jpg' },
-                  { firstName: "Elizabeth", lastName: "Brown", firstLetter: "E", lastLetter: "B", photo: '/content/mobilethemebuilder/images/elizabeth.jpg' },
-                  { firstName: "Felipe", lastName: "Izquierdo", firstLetter: "F", lastLetter: "I", photo: '/content/mobilethemebuilder/images/felipe.jpg' },
-                  { firstName: "Fran", lastName: "Wilson", firstLetter: "F", lastLetter: "W", photo: '/content/mobilethemebuilder/images/fran.jpg' },
-                  { firstName: "Francisco", lastName: "Chang", firstLetter: "F", lastLetter: "C", photo: '/content/mobilethemebuilder/images/francisco.jpg' }
-              ],
-        group: "firstLetter"
-    });
-
-    function regroup() {
-        nameSource.group(this.selectedIndex ? "lastLetter" : "firstLetter");
-    }
-</script>
-
-<script id="nameTemplate" type="text/x-kendo-template">
-    <h2>#:firstName# #:lastName#</h2><img src="#:photo#" />
-</script>
-
-<style scoped>
-	.km-view-title{
-			height:61px;
-			background-color:rgba(0, 0, 0, 1.0);
-	}
-	/*.km-ios, .km-ios .km-content{
-	background:transparent;
-	}*/
-	.km-view{
-		/*background-image:url('content/images/background2.jpg');
-		background-color:rgba(0, 0, 0, 1.0);*/
-		background-color: #6c2408;
-		background-image: linear-gradient(to bottom, #000, #636363);
-		border-color: #D14600;
-		box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
-		color: white;
-	}
-
-    .tweet {
-        font-size: .8em;
-        line-height: 1.4em;
-    }
-    .pullImage {
-        width: 64px;
-        height: 64px;
-        border-radius: 3px;
-        float: left;
-        margin-right: 10px;
-    }
-    .sublink {
-        font-size: .9em;
-        font-weight: normal;
-        display: inline-block;
-        padding: 3px 3px 0 0;
-        text-decoration: none;
-        opacity: .8;
-    }
-	.km-ios .km-toolbar, .km-ios .km-navbar, .km-ios .km-button, .km-ios .km-tabstrip, .km-ios .km-popup .k-item, .km-ios .km-actionsheet > li > a{
-		background-image:none;
-	}
-	.km-ios .km-view .km-navbar{
-		background-color:black;
-	}
-</style>
-
-<style scoped>
-    #buttongroup-navbar h2 {
-        display: inline-block;
-        font-size: 1.1em;
-        margin: 1em 0 .5em 1em;
-    }
-    #buttongroup-navbar img {
-    	float: left;
-        width: 4em;
-        height: 4em;
-        margin: 0;
-        -webkit-box-shadow: 0 1px 3px #333;
-        box-shadow: 0 1px 3px #333;
-        -webkit-border-radius: 8px;
-        border-radius: 8px;
-    }
-</style>
-
-    <script>
-		
-		var markets = [];
-		
-		$(document).ready( function(){
-			setupDefaultView();
-		} );
-		function setupDefaultView() { 
+    /**
+     * Select picture from library
+     */
+    function selectPicture() {
+        navigator.camera.getPicture(
+            function(uri) {
+                var img = document.getElementById('camera_image');
+                img.style.visibility = "visible";
+                img.style.display = "block";
+                img.src = uri;
+                document.getElementById('camera_status').innerHTML = "Success";
+            },
+            function(e) {
+                console.log("Error getting picture: " + e);
+                document.getElementById('camera_status').innerHTML = "Error getting picture.";
+            },
+            { quality: 50, destinationType: navigator.camera.DestinationType.FILE_URI, sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY});
+    };
     
-			//var url = "http://adapptalo.es/data.js";
-			var url = "data.js";
+    /**
+     * Upload current picture
+     */
+    function uploadPicture() {
+    	
+    	// Get URI of picture to upload
+        var img = document.getElementById('camera_image');
+        var imageURI = img.src;
+        if (!imageURI || (img.style.display == "none")) {
+            document.getElementById('camera_status').innerHTML = "Take picture or select picture from library first.";
+            return;
+        }
+        
+        // Verify server has been entered
+        server = document.getElementById('serverUrl').value;
+        if (server) {
+        	
+            // Specify transfer options
+            var options = new FileUploadOptions();
+            options.fileKey="file";
+            options.fileName=imageURI.substr(imageURI.lastIndexOf('/')+1);
+            options.mimeType="image/jpeg";
+            options.chunkedMode = false;
 
-			$.getScript(url, scriptSuccess);
-		}
-		
-		function scriptSuccess(data, textStatus, jqXHR) {
-			
-			for ( var i=0; i<markets.length; i++ ) {
-				markets[i].push( i.toString() );
-			}
-			//alert(markets.length);
-			//console.log( "scriptSuccess: " + markets.length );
-		}
-        app = new kendo.mobile.Application($(document.body), { transition: "slide" });
+            // Transfer picture to server
+            var ft = new FileTransfer();
+            ft.upload(imageURI, server, function(r) {
+                document.getElementById('camera_status').innerHTML = "Upload successful: "+r.bytesSent+" bytes uploaded.";            	
+            }, function(error) {
+                document.getElementById('camera_status').innerHTML = "Upload failed: Code = "+error.code;            	
+            }, options);
+        }
+    }
+
+    /**
+     * View pictures uploaded to the server
+     */
+    function viewUploadedPictures() {
+    	
+    	// Get server URL
+        server = document.getElementById('serverUrl').value;
+        if (server) {
+        	
+            // Get HTML that lists all pictures on server using XHR	
+            var xmlhttp = new XMLHttpRequest();
+
+            // Callback function when XMLHttpRequest is ready
+            xmlhttp.onreadystatechange=function(){
+                if(xmlhttp.readyState === 4){
+
+                    // HTML is returned, which has pictures to display
+                    if (xmlhttp.status === 200) {
+                    	document.getElementById('server_images').innerHTML = xmlhttp.responseText;
+                    }
+
+                    // If error
+                    else {
+                    	document.getElementById('server_images').innerHTML = "Error retrieving pictures from server.";
+                    }
+                }
+            };
+            xmlhttp.open("GET", server , true);
+            xmlhttp.send();       	
+        }	
+    }
+    
+    /**
+     * Function called when page has finished loading.
+     */
+    function init() {
+        document.addEventListener("deviceready", function() {deviceReady = true;}, false);
+        window.setTimeout(function() {
+            if (!deviceReady) {
+                alert("Error: PhoneGap did not initialize.  Demo will not run correctly.");
+            }
+        },2000);
+    }
+
     </script>
-</body>
+
+  </head>
+  <body onload="init();">
+    <h3>PhoneGap Camera Upload Demo</h3>
+    
+    <div>
+        <h3>Server URL for upload.php:</h3>
+        <input id="serverUrl" type="text" value="http://www.adapptalo.es/phonegap/upload.php" />
+    </div>
+    <br/>
+
+	<!-- Camera -->
+	<div>
+		<h3>Camera:</h3>
+		<b>Status:</b> <span id="camera_status"></span><br>
+        <b>Image:</b> <img style="width:120px;visibility:hidden;display:none;" id="camera_image" src="" />
+	</div>
+        
+    <!-- Actions -->
+    <div>
+        <input type="button" onclick="takePicture();" value="Take Picture" /><br/>
+        <input type="button" onclick="selectPicture();" value="Select Picture from Library" /><br/>
+        <input type="button" onclick="uploadPicture();" value="Upload Picture" />
+    </div>
+    <br/>
+    
+    <!-- Server pictures -->
+    <div>
+        <h3>Server:</h3>
+        <b>Images on server:</b>
+        <div id="server_images"></div>
+    </div>
+
+    <!-- Actions -->
+    <div>
+        <input type="button" onclick="viewUploadedPictures();" value="View Uploaded Pictures" />
+    </div>
+    
+  </body>
 </html>
