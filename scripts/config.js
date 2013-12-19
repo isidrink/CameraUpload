@@ -9,6 +9,7 @@ define([], function () {
         serviceUrl: serviceUrl,
         genresUrl: serviceUrl + "/Genres",
         artistsUrl: serviceUrl + "/Artists",
+        beersUrl:"http://localhost/BeerStore/getbeers2.php",
         albumsUrl: serviceUrl + "/Albums",
         loginUrl: serverUrl + "/Api/AccountApi",
         cartSubmitUrl: serverUrl + "/Api/CheckoutApi",

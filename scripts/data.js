@@ -46,6 +46,60 @@ define(["jQuery", "kendo", "config", "utils"], function ($, kendo, config, utils
         
         genresList: new kendo.data.DataSource(new DataSourceConfig(config.genresUrl, "Name")),
         
+        beers: new kendo.data.DataSource({
+                transport: {
+                        read: "beers.json"
+                },
+                group: [{field: "FirstLetter"}],
+                schema: {
+                        parse: function (data) {
+                                $.each(data, function (index, artist) {
+                                        artist.FirstLetter = artist.CERVESERA.substring(0,1).toUpperCase();
+                                        if(artist.FirstLetter.match(/\d/)) {
+                                                artist.FirstLetter = "#"
+                                        }
+                                });
+                                return data;
+                        }
+                }
+        }),
+        beersD: new kendo.data.DataSource({
+                transport: {
+                        read: "beers.json"
+                },
+                group: [{field: "FirstLetter"}],
+                schema: {
+                        parse: function (data) {
+                                $.each(data, function (index, artist) {
+                                        artist.FirstLetter = artist.CERVESERA.substring(0,1).toUpperCase();
+                                        if(artist.FirstLetter.match(/\d/)) {
+                                                artist.FirstLetter = "#"
+                                        }
+                                });
+                                return data;
+                        }
+                }
+        }),
+        beersList: new kendo.data.DataSource(new DataSourceConfig(config.beersUrl, "CERVESERA", {
+            serverFiltering: true,
+            serverSorting: true,
+            serverGrouping: false,
+            group: [{field: "FirstLetter"}],
+            schema: {
+                parse: function (data) {
+                    $.each(data.value, function (index, artist) {
+                        artist.FirstLetter = artist.CERVESERA.substring(0,1).toUpperCase();
+                        if(artist.FirstLetter.match(/\d/)) {
+                            artist.FirstLetter = "#"
+                        }
+                    });
+                    return data;
+                },
+                data: _wcfSchemaData,
+                total: _wcfSchemaTotal
+            }
+        })),
+        
         artistsList: new kendo.data.DataSource(new DataSourceConfig(config.artistsUrl, "Name", {
             serverFiltering: true,
             serverSorting: true,
